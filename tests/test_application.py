@@ -142,6 +142,60 @@ class ApplicationTests(unittest.TestCase):
         again = self.request("POST", "/api/import", raw=exported["body"])
         self.assertEqual(again["json"]["data"]["skipped"], 2)
 
+    def test_repeated_methods_of_every_type_survive_excel_round_trip(self):
+        payload = contact("Repeated methods", True)
+        payload["methods"] = [
+            {"type": kind, "label": f"Label {number}", "value": value}
+            for kind, values in (
+                ("phone", ("00123456789", "+86 138 0000 0000")),
+                ("email", ("first@example.com", "second@example.com")),
+                ("social", ("@first", "@second")),
+                ("address", ("Fuzhou, China", "Manchester, UK")),
+                ("website", ("https://example.com/first", "https://example.com/second")),
+                ("other", ("Office 01", "Office 02")),
+            )
+            for number, value in enumerate(values, 1)
+        ]
+        original = self.create(payload)
+        self.app = Application(self.database)
+        self.assertTrue(self.app.store.get(original["id"])["bookmarked"])
+        exported = self.request("GET", "/api/export")["body"]
+        workbook = load_workbook(BytesIO(exported))
+        headers = [cell.value for cell in workbook["Contacts"][1]]
+        for kind in ("Phone", "Email", "Social", "Address", "Website", "Other"):
+            self.assertIn(f"{kind} 2 Label", headers)
+            self.assertIn(f"{kind} 2 Value", headers)
+        self.assertEqual(workbook["Contacts"].max_row, 2)
+        workbook.close()
+        self.request("DELETE", f'/api/contacts/{original["id"]}')
+        response = self.request("POST", "/api/import", raw=exported)
+        self.assertEqual(response["status"], 200)
+        restored = self.app.store.list_contacts()[0]
+        self.assertEqual(len(restored["methods"]), 12)
+        self.assertEqual(fingerprint(original), fingerprint(restored))
+
+    def test_method_limit_exports_without_truncation(self):
+        payload = contact("Method boundary")
+        payload["methods"] = [
+            {"type": "phone", "label": str(index), "value": f"000{index:04d}"}
+            for index in range(100)
+        ]
+        original = self.create(payload)
+        exported = self.request("GET", "/api/export")["body"]
+        restored = read_workbook(exported)
+        self.assertEqual(len(restored[0]["methods"]), 100)
+        self.assertEqual(fingerprint(original), fingerprint(restored[0]))
+        payload["methods"].append(
+            {"type": "phone", "label": "Overflow", "value": "00101"}
+        )
+        self.assertEqual(
+            self.request("PUT", f'/api/contacts/{original["id"]}', payload)["status"],
+            400,
+        )
+        self.assertEqual(
+            fingerprint(self.app.store.get(original["id"])), fingerprint(original)
+        )
+
     def test_import_atomicity_duplicate_policy_and_same_name(self):
         invalid = workbook_bytes([
             ["Name", "Email 1 Value"], ["Valid", "valid@example.com"], ["Invalid", "bad"],

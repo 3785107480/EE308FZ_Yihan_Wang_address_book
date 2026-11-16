@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#174a42">
+  <meta name="description" content="A personal address book with bookmarks, flexible contact methods and Excel import/export.">
+  <title>Yihan Wang Address Book</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to contacts</a>
+  <aside class="sidebar" aria-label="Workspace navigation">
+    <a class="brand" href="/" aria-label="Address Book home"><img src="/icon.svg" alt="" width="42" height="42"><span>Address Book<small>YOUR PEOPLE, IN ONE PLACE</small></span></a>
+    <div class="workspace-label">PERSONAL WORKSPACE</div>
+    <nav class="navigation" aria-label="Contact filters">
+      <button class="nav-button selected" id="all-view" aria-pressed="true"><span class="nav-icon" aria-hidden="true">▤</span>All contacts<span class="nav-count" id="nav-all">0</span></button>
+      <button class="nav-button" id="bookmarks-view" aria-pressed="false"><span class="nav-icon" aria-hidden="true">☆</span>Bookmarks<span class="nav-count" id="nav-bookmarks">0</span></button>
+    </nav>
+    <div class="sidebar-note"><span class="note-mark" aria-hidden="true">↗</span><strong>Keep your connections close.</strong><p>People, details and little reminders. A place for all of them.</p></div>
+    <button class="sidebar-help" id="format-help">ⓘ <span>Excel format &amp; help</span></button>
+    <div class="profile"><div class="profile-avatar">YW</div><div><strong>Yihan Wang</strong><small>Software Engineering · EE308FZ</small></div></div>
+  </aside>
+
+  <main id="main">
+    <header class="topbar"><span class="breadcrumb">Workspace <span aria-hidden="true">/</span> Contacts</span><button id="refresh-button" class="connection" title="Refresh contacts and check connection"><span class="status-dot"></span><span id="connection-text">Connecting…</span><span aria-hidden="true">↻</span></button></header>
+    <section class="page-heading" aria-labelledby="page-title"><div><p class="eyebrow">A LITTLE MORE CONNECTED</p><h1 id="page-title">Your address book.</h1><p class="subtitle">The people who matter, and every way to reach them.</p></div><button class="button primary" id="add-contact"><span aria-hidden="true">＋</span> Add contact</button></section>
+
+    <div id="load-error" class="error-banner" role="alert" hidden><strong>We couldn’t load your contacts.</strong><span id="load-error-text"></span><button class="button small" id="retry-button">Try again</button></div>
+
+    <section class="stats" aria-label="Address book summary">
+      <div class="stat"><span class="stat-symbol people" aria-hidden="true">▤</span><div><span class="stat-label">Total contacts</span><strong id="stat-total">—</strong></div><small>Your growing circle</small></div>
+      <div class="stat"><span class="stat-symbol star" aria-hidden="true">☆</span><div><span class="stat-label">Bookmarked</span><strong id="stat-bookmarks">—</strong></div><small>Always within reach</small></div>
+      <div class="stat"><span class="stat-symbol methods" aria-hidden="true">↗</span><div><span class="stat-label">Contact methods</span><strong id="stat-methods">—</strong></div><small>More ways to connect</small></div>
+    </section>
+
+    <section class="contacts-section" aria-labelledby="list-title">
+      <div class="section-heading"><div class="section-title"><h2 id="list-title">All contacts</h2><span id="visible-count" class="count-badge">0</span></div><div class="transfer-actions"><button class="button" id="open-import"><span aria-hidden="true">↓</span> Import Excel</button><button class="button" id="export-button"><span aria-hidden="true">↑</span> Export Excel</button></div></div>
+      <div class="search-toolbar"><label class="search-field"><span aria-hidden="true">⌕</span><span class="sr-only">Search contacts</span><input id="search" type="search" placeholder="Search by name, company or contact details…" autocomplete="off"></label><label class="sort-field"><span>Sort by</span><select id="sort" aria-label="Sort contacts"><option value="name">Name A–Z</option><option value="recent">Recently added</option></select></label></div>
+      <div class="list-layout" id="list-layout"><div class="contact-list" id="contact-list" aria-busy="true"><div class="loading">Loading your contacts…</div></div><aside id="contact-detail" class="detail-panel" aria-label="Contact details" hidden></aside></div>
+      <div class="list-footer"><span id="list-description" role="status">Loading contacts…</span><span>Saved to your address book <span class="tiny-dot" aria-hidden="true"></span></span></div>
+    </section>
+    <footer class="page-footer"><span>Yihan Wang Address Book</span><span>Made for meaningful connections.</span></footer>
+  </main>
+
+  <dialog id="contact-dialog" aria-labelledby="contact-dialog-title">
+    <form id="contact-form">
+      <div class="dialog-header"><div><p class="eyebrow">YOUR CONNECTIONS</p><h2 id="contact-dialog-title">Add a contact</h2></div><button type="button" class="icon-button close-contact" aria-label="Close contact form">×</button></div>
+      <div class="dialog-body">
+        <div class="form-grid"><label class="field full">Full name <span class="required">*</span><input name="name" id="contact-name" maxlength="120" required autocomplete="name" placeholder="e.g. Alice Chen"></label><label class="field">Company / organization<input name="company" maxlength="160" autocomplete="organization" placeholder="Where you know them from"></label><label class="field">Job title<input name="job_title" maxlength="160" autocomplete="organization-title" placeholder="Their role"></label></div>
+        <div class="methods-heading"><div><h3>Contact methods</h3><p>Add as many ways to connect as you need.</p></div><button class="button small" id="add-method" type="button">＋ Add method</button></div>
+        <div id="method-fields"></div>
+        <label class="field notes-field">Notes<textarea name="notes" maxlength="5000" rows="3" placeholder="A little context, a reminder, or how you met…"></textarea></label>
+        <label class="checkbox-field"><input name="bookmarked" type="checkbox"><span><strong>Bookmark this contact</strong><small>Keep them easy to find in Bookmarks.</small></span></label>
+        <p class="form-error" id="contact-error" role="alert" hidden></p>
+      </div>
+      <div class="dialog-footer"><span class="form-hint">* Required field</span><button type="button" class="button close-contact">Cancel</button><button type="submit" class="button primary" id="save-contact">Save contact</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="import-dialog" aria-labelledby="import-title">
+    <div class="dialog-header"><div><p class="eyebrow">BRING EVERYONE TOGETHER</p><h2 id="import-title">Import from Excel</h2></div><button class="icon-button" id="close-import" aria-label="Close import dialog">×</button></div>
+    <div class="dialog-body"><p class="import-intro">Add your contacts from an .xlsx workbook. Existing contacts stay in place, and exact duplicates are skipped.</p><label class="upload-zone" id="upload-zone"><span class="upload-icon" aria-hidden="true">⇩</span><strong>Choose an Excel file</strong><span id="file-description">or drop it here · .xlsx · up to 5 MiB</span><input type="file" id="import-file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></label><div class="format-note"><strong>A simple, reliable format</strong><p>Use a Contacts sheet with a Name column. Add repeated columns such as Phone 1 Label and Phone 1 Value for every contact method.</p><a href="/api/template" download>Download blank template ↗</a><a href="/api/sample" download>Download fictional sample ↗</a></div><p class="form-error" id="import-error" role="alert" hidden></p><p class="import-result" id="import-result" role="status" hidden></p></div>
+    <div class="dialog-footer"><span class="form-hint">Invalid rows are reported before anything is added.</span><button class="button primary" id="start-import" disabled>Import contacts</button></div>
+  </dialog>
+
+  <dialog id="delete-dialog" class="small-dialog" aria-labelledby="delete-title"><div class="dialog-header"><h2 id="delete-title">Delete this contact?</h2></div><div class="dialog-body"><p id="delete-description"></p><p class="muted">This removes the contact and all their contact methods. This action cannot be undone.</p><p id="delete-error" class="form-error" role="alert" hidden></p></div><div class="dialog-footer"><button class="button" id="cancel-delete">Cancel</button><button class="button danger" id="confirm-delete">Delete contact</button></div></dialog>
+
+  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-header"><h2 id="help-title">A place for every detail.</h2><button class="icon-button" id="close-help" aria-label="Close help">×</button></div><div class="dialog-body help-content"><h3>Bookmarks</h3><p>Select the star beside a contact to bookmark them. Open Bookmarks in the sidebar to find your important contacts quickly.</p><h3>Multiple contact methods</h3><p>Each person can have multiple labeled phone numbers, emails, social handles, postal addresses, websites and other details. Open a contact to see every method.</p><h3>Excel import &amp; export</h3><p>Export includes all contacts, bookmarks, notes and contact methods in one row per person. Repeated columns keep every value and label. Phone numbers are saved as text to retain leading zeros.</p><p>Import requires an .xlsx workbook with a Contacts sheet. Use the blank template or fictional sample. Invalid rows reject the entire file; exact duplicates are skipped. A contact may have up to 100 methods. A file may contain up to 5,000 contacts and be no larger than 5 MiB.</p><a class="button" href="/api/template" download>Download template</a><h3>Shared demonstration</h3><p>This installation has one shared address book. On a public demonstration, use fictional contacts. Refresh contacts with the connection button at the top.</p></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

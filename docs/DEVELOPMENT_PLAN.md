@@ -15,7 +15,7 @@ issue a further change. Cloud deployment is optional bonus work.
 1. Create, read, edit, delete and search persistent contacts.
 2. Toggle a contact bookmark and provide a dedicated Bookmarks view.
 3. Store multiple labeled phone, email, social, address, website and other methods
-   per contact without a fixed method-count limit.
+   per contact in a one-to-many model, with a practical limit of 100 methods.
 4. Export a real XLSX workbook with one row per contact, explicit column labels,
    and all method values. Reimport the exported format without losing data.
 5. Validate an entire import before writing. Report row-specific errors and import
@@ -65,5 +65,6 @@ student effort as it occurs; assistant elapsed time is not human working time.
 
 - A GitHub repository in the student's account and authenticated publication access.
 - Assignment post URL for the blog information table.
-- Optional cloud host access/configuration, keeping the older calculator service intact.
+- Reuse the student's Alibaba Cloud server at 8.217.14.75; inspect it before
+  configuring the new address book, keeping the older calculator service intact.
 - Student-recorded complete video, screenshots and final CSDN publication/submission.
