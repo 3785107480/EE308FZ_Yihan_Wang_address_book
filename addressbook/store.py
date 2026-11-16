@@ -129,6 +129,7 @@ class Store:
 
     def list_contacts(self):
         with self.connection() as db:
+            db.execute("BEGIN")
             return self._all(db)
 
     def get(self, record_id):
