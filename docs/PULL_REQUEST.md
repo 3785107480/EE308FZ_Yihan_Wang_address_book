@@ -5,7 +5,7 @@ workflow. This change adds contact forms and details, bookmark access, search an
 sorting, Excel download/upload, and visible request feedback in an English
 responsive page.
 
-It also adds a macOS launcher, browser integration runner, CI configuration,
+It also adds a macOS launcher, browser integration runner, test instructions,
 Gunicorn/systemd/Nginx deployment files, and detailed setup and submission
 documentation. The shared-server deployment listens publicly on port 8081 and
 proxies to the address book on localhost:8080.
@@ -19,3 +19,7 @@ contacts and their methods in the same snapshot.
 Browser execution remains pending: Chrome aborted at launch in the development
 environment. Clean dependency installation, manual UI/workbook checks and public
 cloud access must be recorded after running on the student's computer/server.
+
+The GitHub Actions workflow was removed during publication because the available
+token did not allow workflow changes. Automated CI is not enabled in this version;
+the reported test results are from the local verification command.

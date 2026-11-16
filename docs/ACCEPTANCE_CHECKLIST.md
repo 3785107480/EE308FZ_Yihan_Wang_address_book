@@ -13,7 +13,7 @@ publication/evidence; an unchecked external item is not silently claimed complet
 | Markdown and links (10) | Blog draft, README, codestyle sources | Real links + CSDN rendering/navigation |
 | Ideas/screenshots/division (20) | Architecture, blog/evidence guide, single-person 100% | Insert own screenshots and actual experience |
 | Minimum 3 Git commits | Planned/documented focused commit sequence | Push history and capture GitHub commit screenshot |
-| Source reproducible | Requirements, local launcher, CI, deployment files | Clean installation on student's machine |
+| Source reproducible | Requirements, local launcher, test commands, deployment files | Clean installation on student's machine |
 | Release | Release notes and instructions | Publish version + asset and verify download |
 | Pull request | Individual branch PR instructions | Open PR and retain real URL |
 | Full running video | Detailed continuous script | Record, upload, embed and verify playback |

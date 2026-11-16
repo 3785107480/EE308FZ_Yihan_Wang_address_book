@@ -79,5 +79,14 @@ on the student's computer or cloud host. Check the actual installation there.
 - Verify the final GitHub repository, commit history, release asset, pull request
   and published CSDN article independently after publication.
 
-No public deployment, GitHub publication, video publication or CSDN submission is
-claimed complete by this report.
+No public deployment, release, video publication or CSDN submission is claimed
+complete by this report. See the repository push update below.
+
+## Publication update
+
+The student pushed `main` and `feature/complete-address-book` to the confirmed
+GitHub repository on 16 November 2026. The workflow file was removed in commit
+`2ff6678` after GitHub rejected a token without workflow permission. Automated CI
+is therefore not enabled in this version. This does not change the local test
+result above. Pull request, release, final main contents and public application
+access still require verification.
